@@ -1009,6 +1009,21 @@
           ]
         }
       }
+    },
+    "stacks": {
+      "name": "Stacks",
+      "axelarId": "stacks",
+      "tokenSymbol": "STX",
+      "networkType": "testnet",
+      "chainType": "stacks",
+      "finality": "1",
+      "decimals": 6,
+      "approxFinalityWaitTime": 1,
+      "explorer": {
+        "name": "Stacks Explorer",
+        "url": "https://explorer.hiro.so/?chain=testnet"
+      },
+      "contractsDeployerAddress": "ST1MZFF6CRD7DA2PCQCN0N4606S1QVTD7JQEBJ0W6"
     }
   },
   "axelar": {
