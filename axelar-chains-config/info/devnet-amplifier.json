@@ -1013,6 +1013,7 @@
     "stacks": {
       "name": "Stacks",
       "axelarId": "stacks",
+      "rpc": "https://api.testnet.hiro.so",
       "tokenSymbol": "STX",
       "networkType": "testnet",
       "chainType": "stacks",
@@ -1023,7 +1024,8 @@
         "name": "Stacks Explorer",
         "url": "https://explorer.hiro.so/?chain=testnet"
       },
-      "contractsDeployerAddress": "ST1MZFF6CRD7DA2PCQCN0N4606S1QVTD7JQEBJ0W6"
+      "contracts": {},
+      "initialContractsDeployer": "ST1E6KF17F9J2RB3ZJBCK5Y1BFBCCWD7278YXW1MJ"
     }
   },
   "axelar": {
