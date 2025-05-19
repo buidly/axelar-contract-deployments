@@ -20,6 +20,8 @@ const pascalToSnake = (str) => str.replace(/([A-Z])/g, (group) => `_${group.toLo
 
 const pascalToKebab = (str) => str.replace(/([A-Z])/g, (group) => `-${group.toLowerCase()}`).replace(/^-/, '');
 
+const camelToTitle = (str) => str.replace(/([A-Z])/g, (group) => ` ${group}`).replace(/^./, (firstChar) => firstChar.toUpperCase());
+
 const kebabToPascal = (str) => str.replace(/-./g, (match) => match.charAt(1).toUpperCase()).replace(/^./, (match) => match.toUpperCase());
 
 const VERSION_REGEX = /^\d+\.\d+\.\d+$/;
@@ -616,6 +618,16 @@ function encodeITSDestination(config, destinationChain, destinationAddress) {
     }
 }
 
+const getProposalConfig = (config, env, key) => {
+    try {
+        const value = config.axelar?.[key];
+        if (value === undefined) throw new Error(`Key "${key}" not found in config for ${env}`);
+        return value;
+    } catch (error) {
+        throw new Error(`Failed to load config value "${key}" for ${env}: ${error.message}`);
+    }
+};
+
 module.exports = {
     loadConfig,
     saveConfig,
@@ -658,6 +670,7 @@ module.exports = {
     downloadContractCode,
     pascalToKebab,
     pascalToSnake,
+    camelToTitle,
     kebabToPascal,
     readContractCode,
     VERSION_REGEX,
@@ -671,4 +684,5 @@ module.exports = {
     getCurrentVerifierSet,
     asciiToBytes,
     encodeITSDestination,
+    getProposalConfig,
 };
