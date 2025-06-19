@@ -440,20 +440,29 @@ const makeVotingVerifierInstantiateMsg = (config, options, contractConfig, contr
 const makeStacksVotingVerifierInstantiateMsg = (config, options, contractConfig) => {
     const votingVerifierInstantiateMsg = makeVotingVerifierInstantiateMsg(config, options, contractConfig, 'StacksVotingVerifier');
 
+    const { chainName } = options;
     const {
         axelar: { contracts },
     } = config;
     const {
         InterchainTokenService: { address: itsHubAddress },
+        StacksAbiTransformer: {
+            [chainName]: { address: stacksAbiTransformer },
+        },
     } = contracts;
 
     if (!validateAddress(itsHubAddress)) {
         throw new Error('Missing or invalid InterchainTokenService.address in axelar info');
     }
 
+    if (!validateAddress(stacksAbiTransformer)) {
+        throw new Error('Missing or invalid StacksAbiTransformer.address in axelar info');
+    }
+
     return {
         ...votingVerifierInstantiateMsg,
         its_hub_address: itsHubAddress,
+        stacks_abi_transformer: stacksAbiTransformer,
     };
 };
 
@@ -805,6 +814,9 @@ const makeStacksMultisigProverInstantiateMsg = (config, options, contractConfig)
             [chainName]: { address: gatewayAddress },
         },
         InterchainTokenService: { address: itsHubAddress },
+        StacksAbiTransformer: {
+            [chainName]: { address: stacksAbiTransformer },
+        },
     } = contracts;
     const { adminAddress, governanceAddress, domainSeparator, signingThreshold, serviceName, verifierSetDiffThreshold, encoder, keyType } =
         contractConfig;
@@ -876,6 +888,10 @@ const makeStacksMultisigProverInstantiateMsg = (config, options, contractConfig)
         throw new Error(`Missing or invalid StacksMultisigProver[${chainName}].keyType in axelar info`);
     }
 
+    if (!validateAddress(stacksAbiTransformer)) {
+        throw new Error('Missing or invalid StacksAbiTransformer.address in axelar info');
+    }
+
     return {
         admin_address: adminAddress,
         governance_address: governanceAddress,
@@ -892,6 +908,7 @@ const makeStacksMultisigProverInstantiateMsg = (config, options, contractConfig)
         encoder,
         key_type: keyType,
         its_hub_address: itsHubAddress,
+        stacks_abi_transformer: stacksAbiTransformer,
     };
 };
 
@@ -940,6 +957,10 @@ const makeInterchainTokenServiceInstantiateMsg = (config, _options, contractConf
         axelarnet_gateway_address: axelarnetGatewayAddress,
     };
 };
+
+const makeStacksAbiTransformerInstantiateMsg = (config, options, _contractConfig) => {
+    return {};
+}
 
 const fetchCodeIdFromCodeHash = async (client, contractBaseConfig) => {
     if (!contractBaseConfig.storeCodeProposalCodeHash) {
@@ -1309,6 +1330,10 @@ const CONTRACTS = {
     InterchainTokenService: {
         scope: CONTRACT_SCOPE_GLOBAL,
         makeInstantiateMsg: makeInterchainTokenServiceInstantiateMsg,
+    },
+    StacksAbiTransformer: {
+        scope: CONTRACT_SCOPE_CHAIN,
+        makeInstantiateMsg: makeStacksAbiTransformerInstantiateMsg,
     },
 };
 
