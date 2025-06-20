@@ -442,7 +442,7 @@ const makeStacksVotingVerifierInstantiateMsg = (config, options, contractConfig)
 
     const { chainName } = options;
     const {
-        axelar: { contracts },
+        axelar: { contracts, axelarId },
     } = config;
     const {
         InterchainTokenService: { address: itsHubAddress },
@@ -463,6 +463,7 @@ const makeStacksVotingVerifierInstantiateMsg = (config, options, contractConfig)
         ...votingVerifierInstantiateMsg,
         its_hub_address: itsHubAddress,
         stacks_abi_transformer: stacksAbiTransformer,
+        axelar_chain_name: axelarId,
     };
 };
 
@@ -800,7 +801,7 @@ const makeMultisigProverInstantiateMsg = (config, options, contractConfig) => {
 const makeStacksMultisigProverInstantiateMsg = (config, options, contractConfig) => {
     const { chainName } = options;
     const {
-        axelar: { contracts, chainId: axelarChainId },
+        axelar: { contracts, chainId: axelarChainId, axelarId },
     } = config;
     const {
         Router: { address: routerAddress },
@@ -909,6 +910,7 @@ const makeStacksMultisigProverInstantiateMsg = (config, options, contractConfig)
         key_type: keyType,
         its_hub_address: itsHubAddress,
         stacks_abi_transformer: stacksAbiTransformer,
+        axelar_chain_name: axelarId,
     };
 };
 
