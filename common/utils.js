@@ -72,6 +72,18 @@ const printError = (msg, info = '') => {
     console.log(`${chalk.bold.red(msg)}\n`);
 };
 
+const printHighlight = (msg, info = '', colour = chalk.bgBlue) => {
+    if (info) {
+        msg = `${msg}: ${info}`;
+    }
+
+    console.log(`${colour(msg)}\n`);
+};
+
+const printDivider = (char = '-', width = process.stdout.columns, colour = chalk.bold.white) => {
+    console.log(colour(char.repeat(width)));
+};
+
 function printLog(log) {
     console.log(JSON.stringify({ log }, null, 2));
 }
@@ -179,6 +191,14 @@ const httpPost = async (url, data) => {
         body: JSON.stringify(data),
     });
     return response.json();
+};
+
+const callAxelarscanApi = async (config, method, data, time = 10000) => {
+    return timeout(
+        httpPost(`${config.axelar.axelarscanApi}/${method}`, data),
+        time,
+        new Error(`Timeout calling Axelarscan API: ${method}`),
+    );
 };
 
 /**
@@ -595,7 +615,7 @@ function asciiToBytes(string) {
 /**
  * Encodes the destination address for Interchain Token Service (ITS) transfers.
  * This function ensures proper encoding of the destination address based on the destination chain type.
- * Note: - Stellar addresses are converted to ASCII byte arrays.
+ * Note: - Stellar and XRPL addresses are converted to ASCII byte arrays.
  *       - EVM and Sui addresses are returned as-is (default behavior).
  *       - Additional encoding logic can be added for new chain types.
  */
@@ -609,6 +629,10 @@ function encodeITSDestination(config, destinationChain, destinationAddress) {
 
         case 'stellar':
             validateParameters({ isValidStellarAddress: { destinationAddress } });
+            return asciiToBytes(destinationAddress);
+
+        case 'xrpl':
+            // TODO: validate XRPL address format
             return asciiToBytes(destinationAddress);
 
         case 'evm':
@@ -635,6 +659,8 @@ module.exports = {
     printInfo,
     printWarn,
     printError,
+    printHighlight,
+    printDivider,
     printLog,
     isKeccak256Hash,
     isNonEmptyString,
@@ -650,6 +676,7 @@ module.exports = {
     copyObject,
     httpGet,
     httpPost,
+    callAxelarscanApi,
     parseArgs,
     sleep,
     dateToEta,

@@ -719,10 +719,7 @@ const mainProcessor = async (options, processCommand, save = true, catchErr = fa
         const executeChain = (chainName) => {
             const chain = config.chains[chainName.toLowerCase()];
 
-            if (
-                chainsToSkip.includes(chain.name.toLowerCase()) ||
-                chain.status === 'deactive'
-            ) {
+            if (chainsToSkip.includes(chain.name.toLowerCase()) || chain.status === 'deactive') {
                 printWarn('Skipping chain', chain.name);
                 return Promise.resolve();
             }
@@ -759,13 +756,11 @@ const mainProcessor = async (options, processCommand, save = true, catchErr = fa
         return;
     }
 
+    let results = [];
     for (const chainName of chains) {
         const chain = config.chains[chainName.toLowerCase()];
 
-        if (
-            chainsToSkip.includes(chain.name.toLowerCase()) ||
-            chain.status === 'deactive'
-        ) {
+        if (chainsToSkip.includes(chain.name.toLowerCase()) || chain.status === 'deactive') {
             printWarn('Skipping chain', chain.name);
             continue;
         }
@@ -774,7 +769,11 @@ const mainProcessor = async (options, processCommand, save = true, catchErr = fa
         printInfo('Chain', chain.name, chalk.cyan);
 
         try {
-            await processCommand(config, chain, options);
+            const result = await processCommand(config, chain, options);
+
+            if (result) {
+                results.push(result);
+            }
         } catch (error) {
             printError(`Failed with error on ${chain.name}`, error.message);
 
@@ -791,6 +790,8 @@ const mainProcessor = async (options, processCommand, save = true, catchErr = fa
             }
         }
     }
+
+    return results;
 };
 
 function getConfigByChainId(chainId, config) {
@@ -1071,6 +1072,22 @@ const deriveAccounts = async (mnemonic, quantity) => {
     return accounts;
 };
 
+async function printTokenInfo(tokenAddress, provider) {
+    try {
+        const token = new Contract(tokenAddress, getContractJSON('InterchainToken').abi, provider);
+        const [name, symbol, decimals] = await Promise.all([token.name(), token.symbol(), token.decimals()]);
+
+        printInfo(`Token name`, name);
+        printInfo(`Token symbol`, symbol);
+        printInfo(`Token decimals`, decimals);
+
+        return { name, symbol, decimals };
+    } catch (error) {
+        printError(`Could not fetch token information for ${tokenAddress}: ${error.message}`);
+        throw error;
+    }
+}
+
 module.exports = {
     ...require('../common/utils'),
     deployCreate,
@@ -1112,4 +1129,5 @@ module.exports = {
     verifyContractByName,
     isConsensusChain,
     deriveAccounts,
+    printTokenInfo,
 };
