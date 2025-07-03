@@ -1843,7 +1843,7 @@
           "adminAddress": "axelar1lsasewgqj7698e9a25v3c9kkzweee9cvejq5cs"
         }
       },
-      "StacksAbiTransformer": {
+      "ItsStacksTranslator": {
         "stacks": {
           "codeId": 1392,
           "address": "axelar1qtfj4yy6r8g630mxjr4amwmqqttv3gajum5c9x2hlkne7sp7k8wsv2capu"
